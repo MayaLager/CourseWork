@@ -14,3 +14,5 @@
 Чтобы запустить данный анализ у себя:
 
 python3 final_pred.py --doc Test_script.docx --out res_test.txt
+
+нажно скачать файлы 
