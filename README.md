@@ -15,4 +15,4 @@
 
 python3 final_pred.py --doc Test_script.docx --out res_test.txt
 
-нажно скачать файлы 
+нужно скачать файлы final_pred.py, model_course.pkl, vectorizer_course.pkl и поместить в одно место, дальше запускаем строчку выше и вместо Test_script.docx - ваше интервью для анализа, часть, начиная, с --out можно не писать, тогда будет выведен результат в консоль, иначе он сохранится в файл res_test.txt
