@@ -5,112 +5,117 @@ from collections import Counter
 from io import StringIO
 import sys
 
+
 def read_docx(path):
-    doc = docx.Document(path)
-    lines = [p.text for p in doc.paragraphs]
-    return lines
+    cur_file = docx.Document(path)
+    res = []
 
-def get_dialog_pairs(lines):
+    for line in cur_file.paragraphs:
+        res.append(line.text)
+
+    return "\n".join(res)
+
+
+def get_interviewer_lines(text):
     interviewer_lines = []
-    respondent_lines = []
-    for line in lines:
-        line = line.strip()
+
+    for line in text.split('\n'):
+        line = line.lstrip()
         if line.startswith("И:"):
-            interviewer_lines.append(line[2:].strip())
-        elif line.startswith("Р:"):
-            respondent_lines.append(line[2:].strip())
+            interviewer_lines.append(line[len("И:"):].strip())
 
+    return interviewer_lines
+
+
+def get_respondent_lines(text):
+    respondent_lines = []
+
+    for line in text.split('\n'):
+        line = line.lstrip()
+        if line.startswith("Р:"):
+            respondent_lines.append(line[len("Р:"):].strip())
+
+    return respondent_lines
+
+
+def get_dialog_pairs(path):
+    text = read_docx(path)
+    interviewer_lines = get_interviewer_lines(text)
+    respondent_lines = get_respondent_lines(text)
+
+    dialogs = []
     count = min(len(interviewer_lines), len(respondent_lines))
-    pairs = []
+
     for i in range(count):
-        int_text = interviewer_lines[i]
-        res_text = respondent_lines[i]
-        pairs.append((int_text, res_text))
-    return pairs
+        dialogs.append((interviewer_lines[i], respondent_lines[i]))
 
-def predict_docx(docx_path, model_path, vectorizer_path):
-    model = joblib.load(model_path)
-    vectorizer = joblib.load(vectorizer_path)
+    return dialogs
 
-    lines = read_docx(docx_path)
-    pairs = get_dialog_pairs(lines)
 
-    marks = []
-    for (int_text, res_text) in pairs:
-        text_for_clf = f"Вопрос: {int_text} Ответ: {res_text}"
-        X = vectorizer.transform([text_for_clf])
-        pred = model.predict(X)
-        marks.append(int(pred[0]))
+def predict_docx(path):
+    model = joblib.load('model_course.pkl')
+    vectorizer = joblib.load('vectorizer_course.pkl')
 
-    return marks, pairs
+    dialogs = get_dialog_pairs(path)
+    all_marks = []
+
+    for (interviewer_question, respondent_answer) in dialogs:
+        dialog = f"Вопрос: {interviewer_question} Ответ: {respondent_answer}"
+        vector_of_dialog = vectorizer.transform([dialog])
+        mark = model.predict(vector_of_dialog)
+        all_marks.append(int(mark[0]))
+
+    return all_marks, dialogs
+
 
 def state(all_marks):
-    c = Counter(all_marks)
-    total = len(all_marks)
-    inv_ones = c.get(-1, 0)
-    zero = c.get(0, 0)
-    ones = c.get(1, 0)
+    dict_pattern = Counter(all_marks)
+    zero = dict_pattern.get(0, 0)
+    ones = dict_pattern.get(1, 0)
+    inv_ones = dict_pattern.get(-1, 0)
+    state_print = []
+    state_print.append((f"Статистика по {len(all_marks)} диалогам:"))
+    state_print.append((f"Нейтрально - {zero} из {len(all_marks)} ({100.0 * zero / len(all_marks):.2f}%)"))
+    state_print.append((f"Стремление - {ones} из {len(all_marks)} ({100.0 * ones / len(all_marks):.2f}%)"))
+    state_print.append((f"Избегание - {inv_ones} из {len(all_marks)} ({100.0 * inv_ones / len(all_marks):.2f}%)"))
+    return "\n".join(state_print)
 
-    if total > 0:
-        inv_ones_pct = 100.0 * inv_ones / total
-        zero_pct = 100.0 * zero / total
-        ones_pct = 100.0 * ones / total
-    else:
-        inv_ones_pct = zero_pct = ones_pct = 0.0
-
-    # Подготавливаем строку со статистикой
-    stats = []
-    stats.append(f"\nСтатистика по {total} диалогам:")
-    stats.append(f"Нейтрально – {zero} из {total} ({zero_pct:.2f}%)")
-    stats.append(f"Стремление – {ones} из {total} ({ones_pct:.2f}%)")
-    stats.append(f"Избегание – {inv_ones} из {total} ({inv_ones_pct:.2f}%)")
-    return "\n".join(stats)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--doc", type=str, required=True,
                         help="Путь к .docx файлу (формат: И:.. / Р:..).")
-    parser.add_argument("--model", type=str, default="model_course.pkl",
-                        help="Файл с обученной моделью SVC.")
-    parser.add_argument("--vectorizer", type=str, default="vectorizer_course.pkl",
-                        help="Файл с TF-IDF векторизатором.")
     parser.add_argument("--out", type=str, default=None,
                         help="Путь к файлу для сохранения вывода (если не указан, вывод в консоль).")
     args = parser.parse_args()
 
-    marks, dialogs = predict_docx(args.doc, args.model, args.vectorizer)
+    all_marks, dialogs = predict_docx(args.doc)
 
-    # Собираем всё в один общий "отчёт" (строку), чтобы потом либо вывести, либо записать в файл
-    output_lines = []
-    output_lines.append("Классы: -1 = Избегание, 0 = Нейтрально, +1 = Стремление\n")
+    final_res = []
+    final_res.append("Классы: -1 = Избегание, 0 = Нейтрально, 1 = Стремление\n")
 
-    for i, (int_text, res_text) in enumerate(dialogs):
-        label = marks[i]
-        if label == -1:
-            label_name = "избегание"
-        elif label == 0:
-            label_name = "нейтрально"
+    for num, (interviewer_question, respondent_answer) in enumerate(dialogs):
+        mark = all_marks[num]
+        if (mark == -1):
+            mark_str = "Избегание"
+        elif (mark == 0):
+            mark_str = "Нейтрально"
         else:
-            label_name = "стремление"
+            mark_str = "Стремление"
 
         line = (
-            f"Диалог #{i+1} (И: {int_text} / Р: {res_text}) "
-            f"-> класс: {label} ({label_name})"
+            f"Диалог #{num + 1} (И: {interviewer_question} / Р: {respondent_answer}) "
+            f"-> класс: {mark} ({mark_str})\n"
         )
-        output_lines.append(line)
 
-    # Добавим статистику
-    stats_text = state(marks)
-    output_lines.append(stats_text)
+        final_res.append(line)
 
-    final_report = "\n".join(output_lines)
+    final_res.append(state(all_marks))
+    final_res = "\n".join(final_res)
 
-    # Если пользователь указал --out, пишем в файл
     if args.out is not None:
         with open(args.out, "w", encoding="utf-8") as f:
-            f.write(final_report)
+            f.write(final_res)
         print(f"Результат сохранён в файл: {args.out}")
     else:
-        # Иначе выводим в консоль
-        print(final_report)
-
+        print(final_res)
