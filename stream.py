@@ -78,7 +78,9 @@ if user_file:
     user_state = print_state(user_path)
     st.text_area("Результат анализа загруженного файла", value=user_state, height=400)
     st.download_button("Скачать отчёт", user_state, file_name="result.txt", mime="text/plain")
-    
+st.write("") 
+st.write("") 
+st.write("")     
 st.subheader("Примеры файлов для анализа")    
 
 examples_dir = Path(__file__).parent / "Интервью_русские"
