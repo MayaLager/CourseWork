@@ -3,7 +3,18 @@ import tempfile
 from pathlib import Path
 import final_pred
 
-
+def state(all_marks):
+    dict_pattern = Counter(all_marks)
+    zero = dict_pattern.get(0, 0)
+    ones = dict_pattern.get(1, 0)
+    inv_ones = dict_pattern.get(-1, 0)
+    state_print = []
+    state_print.append((f"Статистика по {len(all_marks)} диалогам:"))
+    state_print.append((f"Нейтрально - {zero} из {len(all_marks)} ({100.0 * zero / len(all_marks):.2f}%)"))
+    state_print.append((f"Стремление - {ones} из {len(all_marks)} ({100.0 * ones / len(all_marks):.2f}%)"))
+    state_print.append((f"Избегание - {inv_ones} из {len(all_marks)} ({100.0 * inv_ones / len(all_marks):.2f}%)"))
+    return "\n".join(state_print)
+    
 def print_state(path):
     all_marks, dialogs = final_pred.predict_docx(path)
     final_res = []
@@ -24,7 +35,6 @@ def print_state(path):
         )
 
         final_res.append(line)
-
     final_res.append(state(all_marks))
     final_res = "\n".join(final_res)
     return final_res
