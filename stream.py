@@ -57,7 +57,7 @@ if user_file:
     with open(user_path, "wb") as f:
         f.write(user_file.getbuffer())
     user_state = print_state(user_path)
-    st.text_area("Результат", value=user_state, height=400)
+    st.text_area(""Результат анализа загруженного файла"", value=user_state, height=400)
     st.download_button("Скачать отчёт", user_state, file_name="result.txt", mime="text/plain")
     
 st.subheader("Можете посмотреть примеры файлов")    
@@ -72,7 +72,7 @@ with open(examples_dir / choice, "rb") as f:
         st.download_button("Скачать пример", f.read(), file_name=choice, mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document")
 if st.button("Проанализировать пример"):
     example_state = print_state(examples_dir / choice)
-    st.text_area("Результат", value=example_state, height=400)
+    st.text_area("Результат анализа примера", value=example_state, height=400)
     st.download_button("Скачать отчёт примера", example_state, file_name="result_example.txt", mime="text/plain")
 
             
