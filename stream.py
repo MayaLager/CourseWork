@@ -41,7 +41,7 @@ def print_state(path):
     return final_res
 
 
-st.title("Digital-Analysis-of-the-Interview-for-Identifying-Motivational-Patterns-Approach-Avoidance")
+st.title("Цифровой анализ интервью для выявления мотивационных паттернов: Стремление – Избегание")
 user_file = st.file_uploader("Загрузите .docx", type=["docx"])
 
 st.markdown("Можете посмотреть примеры")
