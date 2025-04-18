@@ -1,4 +1,4 @@
-# CourseWork
+# Digital Analysis of the Interview for Identifying Motivational Patterns: Approach – Avoidance
 Данный проект направлен на автоматическое определение мотивационных паттернов: стремление и избегание по интервью.
 
 Состоит из:
