@@ -13,6 +13,10 @@
 
 Чтобы запустить данный анализ у себя:
 
+1 вариант:
 python3 final_pred.py --doc Test_script.docx --out res_test.txt
 
 нужно скачать файлы final_pred.py, model_course.pkl, vectorizer_course.pkl и поместить в одно место, дальше запускаем строчку выше и вместо Test_script.docx - ваше интервью для анализа, часть, начиная, с --out можно не писать, тогда будет выведен результат в консоль, иначе он сохранится в файл res_test.txt
+
+2 вариант:
+пройти по ссылке https://hwrhjxuzhbwwkefjj95h7s.streamlit.app и загрузить только свой docx файл с интервью вида (И:.... Р:....)
