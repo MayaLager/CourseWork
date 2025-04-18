@@ -57,7 +57,7 @@ if user_file:
     with open(user_path, "wb") as f:
         f.write(user_file.getbuffer())
     user_state = print_state(user_path)
-    st.text_area(""Результат анализа загруженного файла"", value=user_state, height=400)
+    st.text_area("Результат анализа загруженного файла", value=user_state, height=400)
     st.download_button("Скачать отчёт", user_state, file_name="result.txt", mime="text/plain")
     
 st.subheader("Можете посмотреть примеры файлов")    
