@@ -60,12 +60,12 @@ if user_file:
     st.text_area("Результат", value=user_state, height=400)
     st.download_button("Скачать отчёт", user_state, file_name="result.txt", mime="text/plain")
     
-st.markdown("Можете посмотреть примеры")    
+st.subheader("Можете посмотреть примеры файлов")    
 
 examples_dir = Path(__file__).parent / "Интервью_русские"
 sample_files = sorted(examples_dir.glob("*.docx"))
 
-st.subheader("Пример файла")
+
 names = [p.name for p in sample_files]
 choice = st.selectbox("Выберите пример", names)
 with open(examples_dir / choice, "rb") as f:
