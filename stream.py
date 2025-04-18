@@ -63,7 +63,9 @@ example_view = """
 """
 
 st.markdown(example_view, unsafe_allow_html=True)
-
+st.write("") 
+st.write("") 
+st.write("") 
 st.markdown("**Загрузите файл .docx**")
 user_file = st.file_uploader(" ", type=["docx"], label_visibility="collapsed")
 
