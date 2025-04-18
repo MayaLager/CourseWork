@@ -61,18 +61,18 @@ if user_file:
     st.download_button("Скачать отчёт", user_state, file_name="result.txt", mime="text/plain")
     
 st.markdown("Можете посмотреть примеры")    
-else:
-    examples_dir = Path(__file__).parent / "Интервью_русские"
-    sample_files = sorted(examples_dir.glob("*.docx"))
-    if sample_files:
-        st.subheader("Пример файла")
-        names = [p.name for p in sample_files]
-        choice = st.selectbox("Выберите пример", names)
-        with open(examples_dir / choice, "rb") as f:
-                st.download_button("Скачать пример", f.read(), file_name=choice, mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document")
-        if st.button("Проанализировать пример"):
-            report = print_state(examples_dir / choice)
-            st.text_area("Результат", value=report, height=400)
-            st.download_button("Скачать отчёт", report, file_name="result.txt", mime="text/plain")
+
+examples_dir = Path(__file__).parent / "Интервью_русские"
+sample_files = sorted(examples_dir.glob("*.docx"))
+if sample_files:
+    st.subheader("Пример файла")
+    names = [p.name for p in sample_files]
+    choice = st.selectbox("Выберите пример", names)
+    with open(examples_dir / choice, "rb") as f:
+            st.download_button("Скачать пример", f.read(), file_name=choice, mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document")
+    if st.button("Проанализировать пример"):
+        report = print_state(examples_dir / choice)
+        st.text_area("Результат", value=report, height=400)
+        st.download_button("Скачать отчёт", report, file_name="result.txt", mime="text/plain")
 
             
