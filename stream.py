@@ -71,8 +71,8 @@ choice = st.selectbox("Выберите пример", names)
 with open(examples_dir / choice, "rb") as f:
         st.download_button("Скачать пример", f.read(), file_name=choice, mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document")
 if st.button("Проанализировать пример"):
-    report = print_state(examples_dir / choice)
-    st.text_area("Результат", value=report, height=400)
-    st.download_button("Скачать отчёт", report, file_name="result.txt", mime="text/plain")
+    example_state = print_state(examples_dir / choice)
+    st.text_area("Результат", value=example_state, height=400)
+    st.download_button("Скачать отчёт примера", example_state, file_name="result_example.txt", mime="text/plain")
 
             
