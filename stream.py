@@ -79,7 +79,7 @@ if user_file:
     st.text_area("Результат анализа загруженного файла", value=user_state, height=400)
     st.download_button("Скачать отчёт", user_state, file_name="result.txt", mime="text/plain")
     
-st.subheader("Можете посмотреть примеры файлов")    
+st.subheader("Примеры файлов для анализа")    
 
 examples_dir = Path(__file__).parent / "Интервью_русские"
 sample_files = sorted(examples_dir.glob("*.docx"))
