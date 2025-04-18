@@ -42,11 +42,22 @@ def print_state(path):
 
 
 st.title("Цифровой анализ интервью для выявления мотивационных паттернов: Стремление – Избегание")
-st.markdown("Формат файла - docx.")
-st.markdown("Пример того как выглядит внутри файл:")
-st.markdown("И:Мы подключены. Итак, господин Исид, вы меня слышите? Как вы поживаете?")
-st.markdown("Р:Я в порядке. А вы?")
-st.markdown("И:Прежде всего, большое спасибо, что присоединились ко мне. Для меня это большое удовольствие иметь вас в гостях.")
+example_view = """
+<div style="
+    border: 1px solid #e1e4e8;
+    border-radius: 8px;
+    padding: 16px;
+    margin: 10px 0;
+    background-color: #f6f8fa;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+">
+    <p style="margin: 0; color: #333;"><b>И:</b> Мы подключены. Итак, господин Исид, вы меня слышите? Как вы поживаете?</p>
+    <p style="margin: 8px 0 0 0; color: #333;"><b>Р:</b> Я в порядке. А вы?</p>
+    <p style="margin: 8px 0 0 0; color: #333;"><b>И:</b> Прежде всего, большое спасибо, что присоединились ко мне. Для меня это большое удовольствие иметь вас в гостях.</p>
+</div>
+"""
+
+st.markdown(example_view, unsafe_allow_html=True)
 
 user_file = st.file_uploader("Загрузите .docx", type=["docx"])
 
