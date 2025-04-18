@@ -2,6 +2,7 @@ import streamlit as st
 import tempfile
 from pathlib import Path
 import final_pred
+from collections import Counter
 
 def state(all_marks):
     dict_pattern = Counter(all_marks)
