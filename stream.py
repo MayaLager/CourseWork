@@ -43,6 +43,9 @@ def print_state(path):
 
 st.title("Digital-Analysis-of-the-Interview-for-Identifying-Motivational-Patterns-Approach-Avoidance")
 user_file = st.file_uploader("Загрузите .docx", type=["docx"])
+
+st.markdown("Можете посмотреть примеры")
+              
 if user_file:
     user_path = Path(tempfile.gettempdir()) / user_file.name
     with open(user_path, "wb") as f:
@@ -50,3 +53,18 @@ if user_file:
     user_state = print_state(user_path)
     st.text_area("Результат", value=user_state, height=400)
     st.download_button("Скачать отчёт", user_state, file_name="result.txt", mime="text/plain")
+    
+else:
+    examples_dir = Path(__file__).parent / "Интервью_русские"
+    sample_files = sorted(examples_dir.glob("*.docx"))
+    if sample_files:
+        st.subheader("Пример файла")
+        names = [p.name for p in sample_files]
+        choice = st.selectbox("Выберите пример", names)
+        if st.button("Проанализировать пример"):
+            report = print_state(examples_dir / choice)
+            st.text_area("Результат", value=report, height=400)
+            st.download_button("Скачать отчёт", report, file_name="result.txt", mime="text/plain")
+
+            with open(examples_dir / choice, "rb") as f:
+                st.download_button("Скачать пример", f.read(), file_name=choice, mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document")
